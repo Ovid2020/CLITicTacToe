@@ -9,7 +9,7 @@ const makeIntro = function(){
 }
 
 
-var guiData = [['?','?','?'],['?','?','?'],['?','?','?']];
+var guiData = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']];
 
 const makeGUIgrid = function() {
   var GUIgrid = '';
@@ -23,6 +23,19 @@ const makeGUIgrid = function() {
   return GUIgrid;
 };
 
+const errorCheckInput = function(rowCol, rowInd, colInd) {
+  if (rowCol.length != 2) {
+    console.log('Please enter both a row and a column in the format row number, column number.\n');
+    return true;
+  } else if (rowInd < 0 || rowInd > 2 || colInd < 0 || colInd > 2) {
+    console.log('That space is out of bounds! Please place somewhere on the grid.\n');
+    return true;
+  } else if (guiData[rowInd][colInd] !== ' ') {
+    console.log('That space is already occupied! Place somewhere new.\n');
+    return true;
+  }
+}
+
 var grid = makeGUIgrid();
 console.log(makeIntro());
 console.log(grid);
@@ -35,27 +48,17 @@ rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for yo
 rl.prompt();
 
 rl.on('line', function(line) {
-  var areAnyErrors = false;
   var rowCol = line.split(",");
   var rowInd = parseInt(rowCol[0]) - 1;
   var colInd = parseInt(rowCol[1]) - 1;
 
-  if (guiData[rowInd][colInd] !== '?') {
-    console.log('That space is already occupied! Place somewhere new.');
-    areAnyErrors = true;
-  }
-
-  if (rowInd < 0 || rowInd > 2 || colInd < 0 || colInd > 2) {
-    console.log('That space is out of bounds! Please place somewhere on the grid.')
-  }
-
-  if (!areAnyErrors) {
+  if ( !errorCheckInput(rowCol, rowInd, colInd) ) {
     guiData[rowInd][colInd] = playerMark;
     grid = makeGUIgrid();
-    console.log(grid);
+    console.log('\n' + grid);
+    playerMark = playerMark === 'o' ? 'x' : 'o';
   }
 
-  playerMark = playerMark === 'o' ? 'x' : 'o';
   if (line === "exit") {
     rl.close();
   }
