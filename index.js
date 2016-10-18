@@ -8,16 +8,15 @@ const makeIntro = function(){
        + '\n  ______________________________________________________\n\n'
 }
 
-const makeGUIgrid = function(markRow, markCol, mark) {
+
+var guiData = [['?','?','?'],['?','?','?'],['?','?','?']];
+
+const makeGUIgrid = function() {
   var GUIgrid = '';
   for (var i = 0; i < 3; i++){
     GUIgrid += '\t\t  '
     for (var j = 0; j < 3; j++){
-      if (markRow && markCol && (i === parseInt(markRow) && j === parseInt(markCol)) ) {
-        GUIgrid += '| ' + mark + ' |';
-      } else {
-        GUIgrid += '|_?_|';
-      }
+      GUIgrid += '| ' + guiData[i][j] + ' |';
     }
     GUIgrid += '\n';
   }
@@ -27,21 +26,36 @@ const makeGUIgrid = function(markRow, markCol, mark) {
 var grid = makeGUIgrid();
 console.log(makeIntro());
 console.log(grid);
-console.log(showPlayPrompt());
 
-var playerMark = 'o';
+var playerMark = 'o'; 
 
 var rl = readline.createInterface(process.stdin, process.stdout);
 
 rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for your move (r,c): ');
-
 rl.prompt();
 
 rl.on('line', function(line) {
+  var areAnyErrors = false;
   var rowCol = line.split(",");
-  var newGrid = makeGUIgrid(rowCol[0], rowCol[1], 'o');
-  console.log(newGrid);
+  var rowInd = parseInt(rowCol[0]) - 1;
+  var colInd = parseInt(rowCol[1]) - 1;
 
+  if (guiData[rowInd][colInd] !== '?') {
+    console.log('That space is already occupied! Place somewhere new.');
+    areAnyErrors = true;
+  }
+
+  if (rowInd < 0 || rowInd > 2 || colInd < 0 || colInd > 2) {
+    console.log('That space is out of bounds! Please place somewhere on the grid.')
+  }
+
+  if (!areAnyErrors) {
+    guiData[rowInd][colInd] = playerMark;
+    grid = makeGUIgrid();
+    console.log(grid);
+  }
+
+  playerMark = playerMark === 'o' ? 'x' : 'o';
   if (line === "exit") {
     rl.close();
   }
