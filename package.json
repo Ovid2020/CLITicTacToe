@@ -1,0 +1,25 @@
+{
+  "name": "cli-tictactoe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ovid2020/CLITicTacToe.git"
+  },
+  "bin": {
+    "democli": "index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ovid2020/CLITicTacToe/issues"
+  },
+  "homepage": "https://github.com/Ovid2020/CLITicTacToe#readme",
+  "dependencies": {
+    "commander": "^2.9.0"
+  }
+}
