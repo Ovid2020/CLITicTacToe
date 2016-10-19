@@ -1,15 +1,15 @@
 var readline = require('readline');
+var rl = readline.createInterface(process.stdin, process.stdout);
+var playerMark, grid, guiData;
+
 'use strict';
 
 const makeIntro = function(){
   return '\n=========================================================='
        + '\n\n Hello and welcome to Tic Tac Toe, the CLI sensation!'
        + '\n Get ready for heart-pounding action.'
-       + '\n  ______________________________________________________\n\n'
+       + '\n  ______________________________________________________\n\n';
 }
-
-
-var guiData = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']];
 
 const makeGUIgrid = function() {
   var GUIgrid = '';
@@ -23,7 +23,17 @@ const makeGUIgrid = function() {
   return GUIgrid;
 };
 
+const startNewBoard = function() {
+  guiData = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']];
+  playerMark = 'o'; 
+  grid = makeGUIgrid();
+  console.log(makeIntro());
+  console.log(grid);
+  showPromptText();
+};
+
 const errorCheckInput = function(rowCol, rowInd, colInd) {
+  console.log('\n');
   if (rowCol.length != 2) {
     console.log('Please enter both a row and a column in the format row number, column number.\n');
     return true;
@@ -36,21 +46,25 @@ const errorCheckInput = function(rowCol, rowInd, colInd) {
   }
 }
 
-const checkForWinner = function() {
+const winnerChecks = {
 
-  const checkDiags = function(){
+  checkDiags: function() {
     return false;
-  };
+  },
+  checkHorizontals: function() {
+    return guiData.reduce(function(a,b){
+      return a || b.reduce(function(a, b){
+        return a && (b === playerMark);
+      }, true)
+    }, false);
+  },
+  checkVerticals: function() {
+    return false;
+  }
+};
 
-  const checkHorizontals = function(){
-    return true;
-  };
-
-  const checkVerticals = function(){
-
-  };
-
-  if (checkDiags || checkHorizontals || checkVerticals) {
+const checkForWinner = function() {
+  if (winnerChecks.checkDiags() || winnerChecks.checkHorizontals() || winnerChecks.checkVerticals()) {
     return true;
   }
 };
@@ -60,40 +74,40 @@ const showWinText = function(playerMark) {
   console.log('Would you like to play again? Type replay if so, or type exit.\n');
 };
 
-var playerMark, grid; 
-var rl = readline.createInterface(process.stdin, process.stdout);
-
 const showPromptText = function(){
   rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for your move (r,c): ');
   rl.prompt();
 };
 
-const startNewBoard = function() {
-  guiData = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']];
-  playerMark = 'o'; 
+const updateGrid = function(rowInd, colInd){
+  guiData[rowInd][colInd] = playerMark;
   grid = makeGUIgrid();
-  console.log(makeIntro());
-  console.log(grid);
-  showPromptText();
+  console.log('\n' + grid);
 };
+
+
+
+/* ========== GAMEPLAY EVENT "LOOP" =========== */
 
 startNewBoard();
 
 rl.on('line', function(line) {
+
   var rowCol = line.split(",");
   var rowInd = parseInt(rowCol[0]) - 1;
   var colInd = parseInt(rowCol[1]) - 1;
 
   if ( !errorCheckInput(rowCol, rowInd, colInd) ) {
-    guiData[rowInd][colInd] = playerMark;
-    grid = makeGUIgrid();
-    console.log('\n' + grid);
+    updateGrid(rowInd, colInd);
     if (checkForWinner()) {
       showWinText(playerMark);
     } else {
       showPromptText();
     }
     playerMark = playerMark === 'o' ? 'x' : 'o';
+  } else {
+    console.log('\n' + grid);
+    showPromptText();
   }
 
   if (line === 'exit') {
