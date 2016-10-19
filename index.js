@@ -36,16 +36,48 @@ const errorCheckInput = function(rowCol, rowInd, colInd) {
   }
 }
 
-var grid = makeGUIgrid();
-console.log(makeIntro());
-console.log(grid);
+const checkForWinner = function() {
 
-var playerMark = 'o'; 
+  const checkDiags = function(){
+    return false;
+  };
 
+  const checkHorizontals = function(){
+    return true;
+  };
+
+  const checkVerticals = function(){
+
+  };
+
+  if (checkDiags || checkHorizontals || checkVerticals) {
+    return true;
+  }
+};
+
+const showWinText = function(playerMark) {
+  console.log(' ~~* WE HAVE A WINNER! *~~ Player ' + playerMark + ' has connected three spaces.\n');
+  console.log('Would you like to play again? Type replay if so, or type exit.\n');
+};
+
+var playerMark, grid; 
 var rl = readline.createInterface(process.stdin, process.stdout);
 
-rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for your move (r,c): ');
-rl.prompt();
+const showPromptText = function(){
+  rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for your move (r,c): ');
+  rl.prompt();
+};
+
+const startNewBoard = function() {
+  guiData = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']];
+  playerMark = 'o'; 
+  grid = makeGUIgrid();
+  console.log(makeIntro());
+  console.log(grid);
+  showPromptText();
+};
+
+startNewBoard();
 
 rl.on('line', function(line) {
   var rowCol = line.split(",");
@@ -56,14 +88,20 @@ rl.on('line', function(line) {
     guiData[rowInd][colInd] = playerMark;
     grid = makeGUIgrid();
     console.log('\n' + grid);
+    if (checkForWinner()) {
+      showWinText(playerMark);
+    } else {
+      showPromptText();
+    }
     playerMark = playerMark === 'o' ? 'x' : 'o';
   }
 
-  if (line === "exit") {
+  if (line === 'exit') {
     rl.close();
-  }
-  rl.setPrompt('You\'re playing as: ' + playerMark + '\nEnter a row, column for your move (r,c): ');
-  rl.prompt();
+  } else if (line === 'replay') {
+    startNewBoard();
+  } 
+
 }).on('close',function(){
     process.exit(0);
 });
