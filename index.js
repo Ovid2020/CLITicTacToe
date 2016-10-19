@@ -59,7 +59,18 @@ const winnerChecks = {
     }, false);
   },
   checkVerticals: function() {
-    return false;
+    var colIsWinner;
+    for (var i = 0; i < guiData.length; i++){
+      colIsWinner = true;
+      for (var j = 0; j < guiData.length; j++){
+        if (guiData[j][i] !== playerMark){
+          colIsWinner = false;
+        }
+      }
+      if (colIsWinner) {
+        return true;
+      }
+    }
   }
 };
 
