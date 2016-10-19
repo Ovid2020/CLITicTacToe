@@ -49,6 +49,12 @@ const errorCheckInput = function(rowCol, rowInd, colInd) {
 const winnerChecks = {
 
   checkDiags: function() {
+    var center = guiData[1][1];
+    var playerIsInCenter = center === playerMark;
+    if (playerIsInCenter && guiData[0][0] === center && center === guiData[2][2] 
+     || playerIsInCenter && guiData[2][0] === center && center === guiData[0][2]) {
+      return true;
+    }
     return false;
   },
   checkHorizontals: function() {
